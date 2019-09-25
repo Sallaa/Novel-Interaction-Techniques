@@ -4,4 +4,4 @@ Assignments for INFO 6275 – Novel Interaction Techniques @ Cornell
 ## Assignment #1 - MiniProject : Fruit Keyboards with Capacitive Sensing
 The code is available in the Assignment #1 folder.
 
-The video is available at:
+The video is available at: https://youtu.be/R6-KvzaHdoE
