@@ -5,3 +5,8 @@ Assignments for INFO 6275 – Novel Interaction Techniques @ Cornell
 The code is available in the Assignment #1 folder.
 
 The video is available at: https://youtu.be/rAHlvM9as_4
+
+## Assignment #3 - MiniProject : Motion Sensing
+The code is available in the Assignment #3 folder.
+
+The video is available at: https://youtu.be/fdANZXV-Gys
