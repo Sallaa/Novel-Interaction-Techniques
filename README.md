@@ -13,3 +13,6 @@ The papers to review and the review are available in the Assignment #2 folder.
 The code is available in the Assignment #3 folder.
 
 The video is available at: https://youtu.be/priGeJrXDN0
+
+## Project Folder
+The project folder for the group project, **Personal Route Guidance with Haptic Device for Visually Impaired People**
