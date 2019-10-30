@@ -1,1 +1,5 @@
 .DS_Store
+
+//Visual Studio Code Arduino Board settings
+arduino.json
+c_cpp_properties.json
