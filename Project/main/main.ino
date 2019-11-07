@@ -14,6 +14,8 @@ const float startLong = -76.4810678;
 const float endLat = 42.4451686;
 const float endLong = -76.4825014;
 
+float compassAngle;
+float destinationAngle;
 
 float toRadians (float n){
     return n * (PI / 180);
@@ -45,7 +47,28 @@ float getBearing(float startLat, float startLong, float endLat, float endLong)
     return fmod((toDegrees(atan2(dLong, dPhi)) + maxDegrees), maxDegrees);
 }
 
+void vibrate(){
+    float threshholdNoVibrationmin, threshholdNoVibrationmax;
+    float threshholdVibrationmin, threshholdVibrationmax;
 
+    threshholdNoVibrationmin = destinationAngle + 0.05 * destinationAngle;
+    threshholdNoVibrationmax = destinationAngle - 0.05 * destinationAngle;
+
+    threshholdVibrationmin = destinationAngle + 0.2 * destinationAngle;
+    threshholdVibrationmax = destinationAngle - 0.2 * destinationAngle;
+
+    (threshholdNoVibrationmin < 0) ? (threshholdNoVibrationmin += 2 * PI) : ();
+    (threshholdNoVibrationmin > 2 * PI) ? (threshholdNoVibrationmin %= 2 * PI) : ();
+
+    (threshholdNoVibrationmax < 0) ? (threshholdNoVibrationmax += 2 * PI) : ();
+    (threshholdNoVibrationmax > 2 * PI) ? (threshholdNoVibrationmax %= 2 * PI) : ();
+
+    (threshholdVibrationmin < 0) ? (threshholdVibrationmin += 2 * PI) : ();
+    (threshholdVibrationmin > 2 * PI) ? (threshholdVibrationmin %= 2 * PI) : ();
+
+    (threshholdVibrationmax < 0) ? (threshholdVibrationmax += 2 * PI) : ();
+    (threshholdVibrationmax > 2 * PI) ? (threshholdVibrationmax %= 2 * PI) : ();
+}
 
 void setup()
 {
@@ -68,5 +91,6 @@ void loop()
     digitalWrite(pinVibrator100, LOW);
     delay(1000);
 
-    Serial.println(getBearing(startLat,startLong, endLat, endLong));
+    destinationAngle = getBearing(startLat, startLong, endLat, endLong);
+    Serial.println(getBearing(startLat, startLong, endLat, endLong));
 }
