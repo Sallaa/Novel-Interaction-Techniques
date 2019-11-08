@@ -46,28 +46,62 @@ float getBearing(float startLat, float startLong, float endLat, float endLong)
     Serial.println(atan2(dLong, dPhi));
     return fmod((toDegrees(atan2(dLong, dPhi)) + maxDegrees), maxDegrees);
 }
-
+ 
 void vibrate(){
     float threshholdNoVibrationmin, threshholdNoVibrationmax;
     float threshholdVibrationmin, threshholdVibrationmax;
 
-    threshholdNoVibrationmin = destinationAngle + 0.05 * destinationAngle;
-    threshholdNoVibrationmax = destinationAngle - 0.05 * destinationAngle;
+    threshholdNoVibrationmin = destinationAngle + 0.05 * 2 * PI;
+    threshholdNoVibrationmax = destinationAngle - 0.05 * 2 * PI;
 
-    threshholdVibrationmin = destinationAngle + 0.2 * destinationAngle;
-    threshholdVibrationmax = destinationAngle - 0.2 * destinationAngle;
+    threshholdVibrationmin = destinationAngle + 0.2 * 2 * PI;
+    threshholdVibrationmax = destinationAngle - 0.2 * 2 * PI;
 
-    (threshholdNoVibrationmin < 0) ? (threshholdNoVibrationmin += 2 * PI) : ();
-    (threshholdNoVibrationmin > 2 * PI) ? (threshholdNoVibrationmin %= 2 * PI) : ();
+    if (threshholdNoVibrationmin < 0){
+        threshholdNoVibrationmin += 2 * PI;
+    }
 
-    (threshholdNoVibrationmax < 0) ? (threshholdNoVibrationmax += 2 * PI) : ();
-    (threshholdNoVibrationmax > 2 * PI) ? (threshholdNoVibrationmax %= 2 * PI) : ();
+    if (threshholdNoVibrationmin > 2 * PI){
+        threshholdNoVibrationmin -= 2 * PI;
+    }
 
-    (threshholdVibrationmin < 0) ? (threshholdVibrationmin += 2 * PI) : ();
-    (threshholdVibrationmin > 2 * PI) ? (threshholdVibrationmin %= 2 * PI) : ();
+    if (threshholdNoVibrationmax < 0){
+        threshholdNoVibrationmax += 2 * PI;
+    }
 
-    (threshholdVibrationmax < 0) ? (threshholdVibrationmax += 2 * PI) : ();
-    (threshholdVibrationmax > 2 * PI) ? (threshholdVibrationmax %= 2 * PI) : ();
+    if (threshholdNoVibrationmax > 2 * PI){
+        threshholdNoVibrationmax -= 2 * PI;
+    }
+
+    if (threshholdVibrationmin < 0){
+        threshholdVibrationmin += 2 * PI;
+    }
+    
+    if (threshholdVibrationmin > 2 * PI){
+        threshholdVibrationmin -= 2 * PI;
+    }
+
+    if (threshholdVibrationmax < 0){
+        threshholdVibrationmax += 2 * PI;
+    }
+
+    if (threshholdVibrationmax > 2 * PI){
+        threshholdVibrationmax -= 2 * PI;
+    }
+
+    // TODO if Statements for destinationAngle
+    if (threshholdNoVibrationmax > threshholdNoVibrationmin){
+        if (threshholdNoVibrationmax <= destinationAngle && destinationAngle >= threshholdNoVibrationmin)
+        {
+            // TODO: No vibration
+        }
+    }
+    else if (threshholdNoVibrationmin > threshholdNoVibrationmax){
+        if ((threshholdNoVibrationmin <= destinationAngle && destinationAngle <= 2* PI) ||  0 <= destinationAngle && destinationAngle <= threshholdNoVibrationmax)
+        {
+            // TODO: No vibration
+        }
+    }
 }
 
 void setup()
