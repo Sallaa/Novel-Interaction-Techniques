@@ -82,11 +82,11 @@ void vibrate(){
     float threshholdVibrationmin, threshholdVibrationmax; // threshold between 20% or more
 
     // Calculation of the thresholds based on the destinationAngle
-    threshholdNoVibrationmin = destinationAngle + 0.05 * 2 * PI;
-    threshholdNoVibrationmax = destinationAngle - 0.05 * 2 * PI;
+    threshholdNoVibrationmax = destinationAngle + 0.05 * 2 * PI;
+    threshholdNoVibrationmin = destinationAngle - 0.05 * 2 * PI;
 
-    threshholdVibrationmin = destinationAngle + 0.2 * 2 * PI;
-    threshholdVibrationmax = destinationAngle - 0.2 * 2 * PI;
+    threshholdVibrationmax = destinationAngle + 0.2 * 2 * PI;
+    threshholdVibrationmin = destinationAngle - 0.2 * 2 * PI;
 
 
     // Get rid of negative values, and get rid of values > 2 * PI with modulo
@@ -122,32 +122,63 @@ void vibrate(){
         threshholdVibrationmax -= 2 * PI;
     }
 
-    Serial.print("threshholdNoVibrationmin:"); Serial.println(threshholdNoVibrationmin);
-    Serial.print("threshholdNoVibrationmax:"); Serial.println(threshholdNoVibrationmax);
+    Serial.println("");
+    Serial.print("threshholdNoVibrationmin: "); Serial.println(threshholdNoVibrationmin);
+    Serial.print("threshholdVibrationmin: "); Serial.println(threshholdVibrationmin);
+    Serial.print("threshholdNoVibrationmax: "); Serial.println(threshholdNoVibrationmax);
+    Serial.print("threshholdVibrationmax: "); Serial.println(threshholdVibrationmax);
 
     // TODO if Statements for destinationAngle
-    if (threshholdNoVibrationmax > threshholdNoVibrationmin){
-        if (threshholdNoVibrationmax <= compasMeasure && compasMeasure >= threshholdNoVibrationmin)
-        {
-            Serial.write(pinVibrator50, LOW);
-            Serial.write(pinVibrator100, LOW);
+//    if (threshholdNoVibrationmax > threshholdNoVibrationmin){
+//        if (threshholdNoVibrationmax <= compasMeasure && compasMeasure >= threshholdNoVibrationmin)
+//        {
+//            Serial.write(pinVibrator50, LOW);
+//            Serial.write(pinVibrator100, LOW);
+//        }
+//    }
+//    else if (threshholdNoVibrationmin > threshholdNoVibrationmax){
+//        if ((threshholdNoVibrationmin <= compasMeasure && compasMeasure <= 2 * PI) || 0 <= compasMeasure && compasMeasure <= threshholdNoVibrationmax)
+//        {
+//            Serial.write(pinVibrator50, LOW);
+//            Serial.write(pinVibrator100, LOW);
+//        }
+//    }
+      if (compassAngle > threshholdNoVibrationmax) {
+        if (compassAngle > threshholdVibrationmax) {
+          //Serial.write(pinVibrator100, LOW);
+          digitalWrite(pinVibrator100, LOW);
+          Serial.print("Current Zone: Above High Maximum Threshold, 100% Vibration");
         }
-    }
-    else if (threshholdNoVibrationmin > threshholdNoVibrationmax){
-        if ((threshholdNoVibrationmin <= compasMeasure && compasMeasure <= 2 * PI) || 0 <= compasMeasure && compasMeasure <= threshholdNoVibrationmax)
-        {
-            Serial.write(pinVibrator50, LOW);
-            Serial.write(pinVibrator100, LOW);
+        else {
+          //Serial.write(pinVibrator50, LOW);
+          digitalWrite(pinVibrator50, LOW);
+          Serial.print("Current Zone: Above Low Maximum Threshold, 50% Vibration");
         }
-    }
+      }
+      else if (compassAngle < threshholdNoVibrationmin) {
+        if (compassAngle < threshholdVibrationmin) {
+          //Serial.write(pinVibrator100, LOW);
+          digitalWrite(pinVibrator100, LOW);
+          Serial.print("Current Zone: Below Low Minimum Threshold, 100% Vibration");
+        }
+        else {
+          //Serial.write(pinVibrator50, LOW);
+          digitalWrite(pinVibrator50, LOW);
+          Serial.print("Current Zone: Below High Minimum Threshold, 50% Vibration");
+        }
+      }
+      else {
+         Serial.print("Current Zone: Within Both Thresholds, No Vibration");
+      }
 }
 
-void compasMeasure(){
+float compasMeasure(){
     /* Get a new sensor event */
     sensors_event_t event;
     mag.getEvent(&event);
 
     /* Display the results (magnetic vector values are in micro-Tesla (uT)) */
+    Serial.println("");
     Serial.print("X: ");
     Serial.print(event.magnetic.x);
     Serial.print("  ");
@@ -170,7 +201,8 @@ void compasMeasure(){
     float angle = toRadians((180 / 3.14) * atan2(event.magnetic.x, event.magnetic.y) + 180);
     Serial.print("Angle: ");
     Serial.println(angle);
-
+    Serial.println("");
+    return angle;
     /* Delay before the next sample */
     delay(500);
 }
@@ -222,7 +254,8 @@ void loop()
 
     destinationAngle = getBearing(startLat, startLong, endLat, endLong);
     vibrate();
-    Serial.println(destinationAngle);
-    compasMeasure();
+    Serial.println("Destination Angle: "); Serial.print(destinationAngle);
+    compassAngle = compasMeasure();
+    Serial.print("Compass Angle: "); Serial.print(compassAngle);
     delay(10);
 }
