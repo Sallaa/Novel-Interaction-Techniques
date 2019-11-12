@@ -75,15 +75,21 @@ float getBearing(float startLat, float startLong, float endLat, float endLong)
 }
  
 void vibrate(){
-    float threshholdNoVibrationmin, threshholdNoVibrationmax;
-    float threshholdVibrationmin, threshholdVibrationmax;
+    // Make the vibrators vibrate based on three intensities.
+    // Depends on the compassAngle measured
 
+    float threshholdNoVibrationmin, threshholdNoVibrationmax; // threshold between 5%-20%
+    float threshholdVibrationmin, threshholdVibrationmax; // threshold between 20% or more
+
+    // Calculation of the thresholds based on the destinationAngle
     threshholdNoVibrationmin = destinationAngle + 0.05 * 2 * PI;
     threshholdNoVibrationmax = destinationAngle - 0.05 * 2 * PI;
 
     threshholdVibrationmin = destinationAngle + 0.2 * 2 * PI;
     threshholdVibrationmax = destinationAngle - 0.2 * 2 * PI;
 
+
+    // Get rid of negative values, and get rid of values > 2 * PI with modulo
     if (threshholdNoVibrationmin < 0){
         threshholdNoVibrationmin += 2 * PI;
     }
@@ -121,15 +127,17 @@ void vibrate(){
 
     // TODO if Statements for destinationAngle
     if (threshholdNoVibrationmax > threshholdNoVibrationmin){
-        if (threshholdNoVibrationmax <= destinationAngle && destinationAngle >= threshholdNoVibrationmin)
+        if (threshholdNoVibrationmax <= compasMeasure && compasMeasure >= threshholdNoVibrationmin)
         {
-            // TODO: No vibration
+            Serial.write(pinVibrator50, LOW);
+            Serial.write(pinVibrator100, LOW);
         }
     }
     else if (threshholdNoVibrationmin > threshholdNoVibrationmax){
-        if ((threshholdNoVibrationmin <= destinationAngle && destinationAngle <= 2* PI) ||  0 <= destinationAngle && destinationAngle <= threshholdNoVibrationmax)
+        if ((threshholdNoVibrationmin <= compasMeasure && compasMeasure <= 2 * PI) || 0 <= compasMeasure && compasMeasure <= threshholdNoVibrationmax)
         {
-            // TODO: No vibration
+            Serial.write(pinVibrator50, LOW);
+            Serial.write(pinVibrator100, LOW);
         }
     }
 }
@@ -216,4 +224,5 @@ void loop()
     vibrate();
     Serial.println(destinationAngle);
     compasMeasure();
+    delay(10);
 }
