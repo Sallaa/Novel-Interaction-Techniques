@@ -14,5 +14,12 @@ The code is available in the Assignment #3 folder.
 
 The video is available at: https://youtu.be/priGeJrXDN0
 
+## Assignment #4 - MiniProject : Motion Sensing
+The code is available in the Assignment #4 folder.
+
+Video demo of the gesture recognition for all 6 gestures: https://youtu.be/MvBoSU1Wgh42
+
+Video demo of visualization of 6 axis sensor data without filter and with filter: https://youtu.be/DNcQzDf48cw1
+
 ## Project Folder
 The project folder for the group project, **Personal Route Guidance with Haptic Device for Visually Impaired People**
