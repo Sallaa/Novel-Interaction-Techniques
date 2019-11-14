@@ -128,7 +128,7 @@ void vibrate(){
     Serial.print("threshholdNoVibrationmax: "); Serial.println(threshholdNoVibrationmax);
     Serial.print("threshholdVibrationmax: "); Serial.println(threshholdVibrationmax);
 
-    // TODO if Statements for destinationAngle
+//     TODO if Statements for destinationAngle
 //    if (threshholdNoVibrationmax > threshholdNoVibrationmin){
 //        if (threshholdNoVibrationmax <= compasMeasure && compasMeasure >= threshholdNoVibrationmin)
 //        {
@@ -146,24 +146,29 @@ void vibrate(){
       if (compassAngle > threshholdNoVibrationmax) {
         if (compassAngle > threshholdVibrationmax) {
           //Serial.write(pinVibrator100, LOW);
-          digitalWrite(pinVibrator100, LOW);
+          digitalWrite(pinVibrator50, LOW);
+          digitalWrite(pinVibrator100, HIGH);
+          
           Serial.print("Current Zone: Above High Maximum Threshold, 100% Vibration");
         }
         else {
           //Serial.write(pinVibrator50, LOW);
-          digitalWrite(pinVibrator50, LOW);
+          digitalWrite(pinVibrator100, LOW);
+          digitalWrite(pinVibrator50, HIGH);
           Serial.print("Current Zone: Above Low Maximum Threshold, 50% Vibration");
         }
       }
       else if (compassAngle < threshholdNoVibrationmin) {
         if (compassAngle < threshholdVibrationmin) {
           //Serial.write(pinVibrator100, LOW);
-          digitalWrite(pinVibrator100, LOW);
+          digitalWrite(pinVibrator50, LOW);
+          digitalWrite(pinVibrator100, HIGH);
           Serial.print("Current Zone: Below Low Minimum Threshold, 100% Vibration");
         }
         else {
           //Serial.write(pinVibrator50, LOW);
-          digitalWrite(pinVibrator50, LOW);
+          digitalWrite(pinVibrator100, LOW);
+          digitalWrite(pinVibrator50, HIGH);
           Serial.print("Current Zone: Below High Minimum Threshold, 50% Vibration");
         }
       }
