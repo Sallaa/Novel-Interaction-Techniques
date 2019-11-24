@@ -62,8 +62,8 @@ void loop(void)
   // Serial.print("X Raw: "); Serial.print(mag.raw.x); Serial.print("  ");
   // Serial.print("Y Raw: "); Serial.print(mag.raw.y); Serial.print("  ");
   // Serial.print("Z Raw: "); Serial.print(mag.raw.z); Serial.println("");
-
-  float angle = (180/3.14 ) * atan2(event.magnetic.x, event.magnetic.y);
+  Serial.print("atan2: "); Serial.println(atan2(event.magnetic.x, event.magnetic.y));
+  float angle = (180/3.14 ) * atan2(event.magnetic.x, event.magnetic.y) + 180;
   Serial.print("Angle: "); Serial.println(angle);
   
 
