@@ -41,12 +41,14 @@ void displaySensorDetails(void)
     delay(500);
 }
 
-float toRadians (float n){
+float toRadians(float n)
+{
     return n * (PI / 180);
 }
 
-float toDegrees(float n){
-    return n *(180 / PI);
+float toDegrees(float n)
+{
+    return n * (180 / PI);
 }
 
 float getBearing(float startLat, float startLong, float endLat, float endLong)
@@ -67,131 +69,142 @@ float getBearing(float startLat, float startLong, float endLat, float endLong)
             dLong = (2.0 * PI + dLong);
     }
     float maxDegrees = 360;
-//    Serial.println(atan2(dLong, dPhi));
-    return toRadians(fmod((toDegrees(atan2(dLong, dPhi))), maxDegrees));
+    //    Serial.println(atan2(dLong, dPhi));
+    float radVal = toRadians(fmod((toDegrees(atan2(dLong, dPhi))), maxDegrees));
+    if (radVal < 0){
+        radVal += 2 * PI;
+    }
+    return radVal;
 }
- 
-void vibrate(){
+
+void leftOrRight(float currAngle, float destAngle)
+{
+
+    float directionAngle = destAngle - currAngle;
+    directionAngle = fmod((directionAngle + PI),2 * PI) - PI;
+
+    if (directionAngle < 0)
+    {
+        Wire.beginTransmission(4);
+        Wire.write("l");
+        Wire.write(0);
+        delay(500);
+        Wire.endTransmission();
+
+        Wire.beginTransmission(4);
+        Wire.write("r");
+        Wire.write(1);
+        delay(500);
+        Wire.endTransmission();
+
+        Serial.println("right");
+    }
+    else
+    {
+        Wire.beginTransmission(4);
+        Wire.write("r");
+        Wire.write(1);
+        delay(500);
+        Wire.endTransmission();
+
+        Wire.beginTransmission(4);
+        Wire.write("l");
+        Wire.write(0);
+        delay(500);
+        Wire.endTransmission();
+
+        Serial.println("left");
+    }
+}
+
+void vibrate()
+{
     // Make the vibrators vibrate based on three intensities.
     // Depends on the compassAngle measured
 
-    float threshholdNoVibrationmin, threshholdNoVibrationmax; // threshold between 5%-20%
-    float threshholdVibrationmin, threshholdVibrationmax; // threshold between 20% or more
+    float threshholdNoVibrationmin, threshholdNoVibrationmax; // threshold 5%
 
     // Calculation of the thresholds based on the destinationAngle
     threshholdNoVibrationmax = destinationAngle + 0.05 * 2 * PI;
     threshholdNoVibrationmin = destinationAngle - 0.05 * 2 * PI;
 
-    threshholdVibrationmax = destinationAngle + 0.2 * 2 * PI;
-    threshholdVibrationmin = destinationAngle - 0.2 * 2 * PI;
-
-
     // Get rid of negative values, and get rid of values > 2 * PI with modulo
-    if (threshholdNoVibrationmin < 0){
+    if (threshholdNoVibrationmin < 0)
+    {
         threshholdNoVibrationmin += 2 * PI;
     }
 
-    if (threshholdNoVibrationmin > 2 * PI){
+    if (threshholdNoVibrationmin > 2 * PI)
+    {
         threshholdNoVibrationmin -= 2 * PI;
     }
 
-    if (threshholdNoVibrationmax < 0){
+    if (threshholdNoVibrationmax < 0)
+    {
         threshholdNoVibrationmax += 2 * PI;
     }
 
-    if (threshholdNoVibrationmax > 2 * PI){
+    if (threshholdNoVibrationmax > 2 * PI)
+    {
         threshholdNoVibrationmax -= 2 * PI;
     }
 
-    if (threshholdVibrationmin < 0){
-        threshholdVibrationmin += 2 * PI;
-    }
-    
-    if (threshholdVibrationmin > 2 * PI){
-        threshholdVibrationmin -= 2 * PI;
-    }
-
-    if (threshholdVibrationmax < 0){
-        threshholdVibrationmax += 2 * PI;
-    }
-
-    if (threshholdVibrationmax > 2 * PI){
-        threshholdVibrationmax -= 2 * PI;
-    }
-
     Serial.println("");
-    Serial.print("threshholdNoVibrationmin: "); Serial.println(threshholdNoVibrationmin);
-    Serial.print("threshholdVibrationmin: "); Serial.println(threshholdVibrationmin);
-    Serial.print("threshholdNoVibrationmax: "); Serial.println(threshholdNoVibrationmax);
-    Serial.print("threshholdVibrationmax: "); Serial.println(threshholdVibrationmax);
+    Serial.print("threshholdNoVibrationmin: ");
+    Serial.println(threshholdNoVibrationmin);
+    Serial.print("threshholdNoVibrationmax: ");
+    Serial.println(threshholdNoVibrationmax);
 
-//     TODO if Statements for destinationAngle
-//    if (threshholdNoVibrationmax > threshholdNoVibrationmin){
-//        if (threshholdNoVibrationmax <= compasMeasure && compasMeasure >= threshholdNoVibrationmin)
-//        {
-//            Serial.write(pinVibrator50, LOW);
-//            Serial.write(pinVibrator100, LOW);
-//        }
-//    }
-//    else if (threshholdNoVibrationmin > threshholdNoVibrationmax){
-//        if ((threshholdNoVibrationmin <= compasMeasure && compasMeasure <= 2 * PI) || 0 <= compasMeasure && compasMeasure <= threshholdNoVibrationmax)
-//        {
-//            Serial.write(pinVibrator50, LOW);
-//            Serial.write(pinVibrator100, LOW);
-//        }
-//    }
-      if (compassAngle > threshholdNoVibrationmax) {
-        if (compassAngle > threshholdVibrationmax) {
-          //Serial.write(pinVibrator100, LOW);
+    if (compassAngle > threshholdNoVibrationmax)
+    {
+        leftOrRight(compassAngle, destinationAngle);
 
-          digitalWrite(pinVibrator100, HIGH);
-          
-          Serial.print("Current Zone: Above High Maximum Threshold, 100% Vibration");
-        }
-        else {
-          //Serial.write(pinVibrator50, LOW);
-          digitalWrite(pinVibrator100, LOW);
+        //   TODO digitalWrite(pinVibrator100, HIGH);
+    }
+    else if (compassAngle < threshholdNoVibrationmin)
+    {
 
-          Serial.print("Current Zone: Above Low Maximum Threshold, 50% Vibration");
-        }
-      }
-      else if (compassAngle < threshholdNoVibrationmin) {
-        if (compassAngle < threshholdVibrationmin) {
-          //Serial.write(pinVibrator100, LOW);
+        leftOrRight(compassAngle, destinationAngle);
 
-          digitalWrite(pinVibrator100, HIGH);
-          Serial.print("Current Zone: Below Low Minimum Threshold, 100% Vibration");
-        }
-        else {
-          //Serial.write(pinVibrator50, LOW);
-          digitalWrite(pinVibrator100, LOW);
+        //   TODO digitalWrite(pinVibrator100, HIGH);
+    }
+    else
+    {
+        Serial.print("Current Zone: Within Both Thresholds, No Vibration");
 
-          Serial.print("Current Zone: Below High Minimum Threshold, 50% Vibration");
-        }
-      }
-      else {
-         Serial.print("Current Zone: Within Both Thresholds, No Vibration");
-      }
+        Wire.beginTransmission(4);
+        Wire.write("l");
+        Wire.write(0);
+        delay(500);
+        Wire.endTransmission();
+
+        Wire.beginTransmission(4);
+        Wire.write("r");
+        Wire.write(0);
+        delay(500);
+        Wire.endTransmission();
+    }
 }
 
-float compasMeasure(){
+float compasMeasure()
+{
     /* Get a new sensor event */
     sensors_event_t event;
     mag.getEvent(&event);
 
     /* Display the results (magnetic vector values are in micro-Tesla (uT)) */
 
-    // Serial.println("");
-    // Serial.print("X: ");
-    // Serial.print(event.magnetic.x);
-    // Serial.print("  ");
-    // Serial.print("Y: ");
-    // Serial.print(event.magnetic.y);
-    // Serial.print("  ");
-    // Serial.print("Z: ");
-    // Serial.print(event.magnetic.z);
-    // Serial.print("  ");
-    // Serial.println("uT");
+    Serial.println("");
+    Serial.print("X: ");
+    Serial.print(event.magnetic.x);
+    Serial.print("  ");
+    Serial.print("Y: ");
+    Serial.print(event.magnetic.y);
+    Serial.print("  ");
+    Serial.print("Z: ");
+    Serial.print(event.magnetic.z);
+    Serial.print("  ");
+    Serial.println("uT");
 
     /* Note: You can also get the raw (non unified values) for */
     /* the last data sample as follows. The .getEvent call populates */
@@ -201,10 +214,16 @@ float compasMeasure(){
     // Serial.print("Z Raw: "); Serial.print(mag.raw.z); Serial.println("");
     Serial.print("atan2: ");
     Serial.println(atan2(event.magnetic.x, event.magnetic.y));
-    float angle = toRadians((180 / 3.14) * atan2(event.magnetic.x, event.magnetic.y) + 180);
+    float angle = atan2(event.magnetic.x, event.magnetic.y);
     Serial.print("Angle: ");
     Serial.println(angle);
     Serial.println("");
+
+    if (angle < 0)
+    {
+        angle += 2 * PI;
+    }
+
     return angle;
     /* Delay before the next sample */
     delay(500);
@@ -212,13 +231,13 @@ float compasMeasure(){
 
 void setup()
 {
-    #ifndef ESP8266
-        while (!Serial)
-            ; // will pause Zero, Leonardo, etc until serial console opens
-    #endif
-    
+#ifndef ESP8266
+    while (!Serial)
+        ; // will pause Zero, Leonardo, etc until serial console opens
+#endif
+
     Serial.begin(9600);
-    
+
     Wire.begin();
 
     Serial.println("Magnetometer Test");
@@ -242,39 +261,15 @@ void setup()
 
 void loop()
 {
-    
-//    destinationAngle = getBearing(startLat, startLong, endLat, endLong);
-//    vibrate();
-//    Serial.println("Destination Angle: "); Serial.print(destinationAngle);
-//    compassAngle = compasMeasure();
-//    Serial.print("Compass Angle: "); Serial.print(compassAngle);
-//    delay(1000);
 
-Wire.beginTransmission(4); // transmit to device #4
-    Wire.write("l");        // sends five bytes
-  Wire.write(1);              // sends one byte  
- delay(500);
-  Wire.endTransmission();    // stop transmitting
-
-
-Wire.beginTransmission(4); // transmit to device #4
-    Wire.write("l");        // sends five bytes
-  Wire.write(0);              // sends one byte  
- delay(500);
-  Wire.endTransmission();
-
-
-  Wire.beginTransmission(4); // transmit to device #4
-    Wire.write("r");        // sends five bytes
-  Wire.write(1);              // sends one byte  
- delay(500);
-  Wire.endTransmission();
-
-
-  Wire.beginTransmission(4); // transmit to device #4
-    Wire.write("r");        // sends five bytes
-  Wire.write(0);              // sends one byte  
- delay(500);
-  Wire.endTransmission();
+       destinationAngle = getBearing(startLat, startLong, endLat, endLong);
+       Serial.println("Destination Angle: ");
+       Serial.print(destinationAngle);
+       compassAngle = compasMeasure();
+       Serial.print("Compass Angle: ");
+       Serial.print(compassAngle);
+       vibrate();
+       
+       delay(1000);
 
 }
