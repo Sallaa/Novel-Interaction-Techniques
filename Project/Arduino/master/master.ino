@@ -103,13 +103,13 @@ void leftOrRight(float currAngle, float destAngle)
     {
         Wire.beginTransmission(4);
         Wire.write("r");
-        Wire.write(1);
+        Wire.write(0);
         delay(500);
         Wire.endTransmission();
 
         Wire.beginTransmission(4);
         Wire.write("l");
-        Wire.write(0);
+        Wire.write(1);
         delay(500);
         Wire.endTransmission();
 
@@ -149,11 +149,11 @@ void vibrate()
         threshholdNoVibrationmax -= 2 * PI;
     }
 
-    Serial.println("");
-    Serial.print("threshholdNoVibrationmin: ");
-    Serial.println(threshholdNoVibrationmin);
-    Serial.print("threshholdNoVibrationmax: ");
-    Serial.println(threshholdNoVibrationmax);
+    // Serial.println("");
+    // Serial.print("threshholdNoVibrationmin: ");
+    // Serial.println(threshholdNoVibrationmin);
+    // Serial.print("threshholdNoVibrationmax: ");
+    // Serial.println(threshholdNoVibrationmax);
 
     if (compassAngle > threshholdNoVibrationmax)
     {
@@ -175,13 +175,13 @@ void vibrate()
         Wire.beginTransmission(4);
         Wire.write("l");
         Wire.write(0);
-        delay(500);
+        delay(300);
         Wire.endTransmission();
 
         Wire.beginTransmission(4);
         Wire.write("r");
         Wire.write(0);
-        delay(500);
+        delay(300);
         Wire.endTransmission();
     }
 }
@@ -226,7 +226,7 @@ float compasMeasure()
 
     return angle;
     /* Delay before the next sample */
-    delay(500);
+    delay(50);
 }
 
 void setup()
